@@ -106,6 +106,8 @@ enable_paging:
 
 	ret
 
+
+
 error:
 	; print "ERR: X" where X is the error code
 	mov dword [0xb8000], 0x4f524f45
@@ -126,7 +128,7 @@ stack_bottom:
 	resb 4096 * 4
 stack_top:
 
-section .rodata
+
 gdt64:
 	dq 0 ; zero entry
 .code_segment: equ $ - gdt64

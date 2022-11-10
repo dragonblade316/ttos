@@ -5,9 +5,9 @@ HEADER_DIR = ./headers
 ISOFILES = ./target/iso
 ISO = ./target/os.iso
 
-CFILES = src/kernel.c src/print.c
+CFILES = src/kernel.c src/print.c PIC.c src/exception_handler.c src/IDT.c
 #CPPFILES =
-ASMFILES = src/asm/multiboot_header.asm src/asm/main.asm src/asm/main64.asm
+ASMFILES = src/asm/multiboot_header.asm src/asm/main.asm src/asm/main64.asm handler.asm
 
 
 SOURCE_DIRS := $(dir $(CFILES))

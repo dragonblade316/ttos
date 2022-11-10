@@ -1,0 +1,13 @@
+{
+    "C_Cpp.errorSquiggles": "Enabled",
+    "files.associations": {
+        "idt.h": "c"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/dragonblade316/programing/ttos/target/iso/boot",
+            "binaryPath": "/home/dragonblade316/programing/ttos/target/iso/boot/kernel.bin",
+            "binaryArgs": []
+        }
+    ]
+}
