@@ -49,9 +49,8 @@ void gdt_init() {
 
     //TODO program gets stuck on this
     /* Our NULL descriptor */
-    //gdt_set_gate(0, 0, 0, 0, 0);
+    gdt_set_gate(0, 0, 0, 0, 0);
     
-
      /* The second entry is our Code Segment. The base address
     *  is 0, the limit is 4GBytes, it uses 4KByte granularity,
     *  uses 32-bit opcodes, and is a Code Segment descriptor.
@@ -66,5 +65,6 @@ void gdt_init() {
 
     //TODO on one of the repos im using as a reference there is user code and user data
 
+    
     gdt_flush();
 }
