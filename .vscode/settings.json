@@ -1,7 +1,8 @@
 {
     "C_Cpp.errorSquiggles": "Enabled",
     "files.associations": {
-        "idt.h": "c"
+        "idt.h": "c",
+        "print.h": "c"
     },
     "makefile.launchConfigurations": [
         {

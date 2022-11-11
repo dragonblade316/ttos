@@ -1,3 +1,38 @@
+bits 32
+align 4
+
+global start
+
+section .text
+start:
+	; Set up stack pointer.
+	mov esp, stack_end
+	
+	cli ;disable interupts
+
+	extern kernel_main
+	call kernel_main ; call c code
+
+	hlt
+
+
+tester:
+	ret
+
+global gdt_flush
+extern gdtr
+gdt_flush:
+    lgdt [gdtr]        ; Load the GDT with our 'gdtr' which is a special pointer
+    mov ax, 0x10      ; 0x10 is the offset in the GDT to our data segment
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+    jmp 0x08:flush2   ; 0x08 is the offset to our code segment: Far jump!
+flush2:
+    ret
+
 %macro isr_err_stub 1
 isr_stub_%+%1:
     call exception_handler
@@ -51,3 +86,11 @@ isr_stub_table:
     dd isr_stub_%+i ; use DQ instead if targeting 64-bit
 %assign i i+1 
 %endrep
+
+
+
+SECTION .bss
+
+stack_begin:
+    RESB 4096  ; Reserve 4 KiB stack space
+stack_end:

@@ -5,9 +5,11 @@ HEADER_DIR = ./headers
 ISOFILES = ./target/iso
 ISO = ./target/os.iso
 
-CFILES = src/kernel.c src/print.c PIC.c src/exception_handler.c src/IDT.c
+CFLAGS = -ffreestanding
+
+CFILES = src/kernel.c src/cpu/GDT.c src/cpu/IDT.c src/display/print.c #PIC.c src/exception_handler.c #liballoc_hooks.c liballoc.c
 #CPPFILES =
-ASMFILES = src/asm/multiboot_header.asm src/asm/main.asm src/asm/main64.asm handler.asm
+ASMFILES = src/misc/multiboot_header.asm src/start.asm #src/asm/main.asm src/asm/main64.asm handler.asm
 
 
 SOURCE_DIRS := $(dir $(CFILES))
@@ -37,7 +39,7 @@ $(ISOFILES)/boot : $(OBJ_FILES)
 #compile c
 $(OBJ_DIR)/%.o : %.c
 	$(shell mkdir -p $(OBJ_DIR) )
-	gcc -Wall -ffreestanding -I $(HEADER_DIR) -c $< -o $@
+	gcc -Wall $(CFLAGS) -I $(HEADER_DIR) -c $< -o $@
 
 #compile cpp
 #$(OBJ_DIR)/$.o : %.cpp | $(OBJ_DIR)
@@ -49,8 +51,12 @@ $(OBJ_DIR)/%.o : %.asm
 	$(shell mkdir -p $(OBJ_DIR) )
 	nasm -f elf64 $< -o $@
 
-run:	
+run : $(ISO)
 	qemu-system-x86_64 -cdrom ./target/os.iso
+
+debug : $(ISO)
+	qemu-system-x86_64 -s -S -cdrom ./target/os.iso
+
 
 clean:
 	rm -fr $(OBJ_DIR)
