@@ -1,5 +1,5 @@
 #include "system.h"
-
+#include "print.h"
 
 #define IDT_MAX_DESCRIPTORS 256
 
@@ -39,29 +39,30 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
 }
 
 static idt_entry_t idt[256];
-static idtr_t idtr;
+idtr_t idtr;
 
 
 extern void* isr_stub_table[];
+extern void* irq_entry_table[];
+extern void idt_load();
 
 void idt_init() {
 
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
-    
-    for (uint8_t vector = 0; vector < 32; vector++) {
+    //ISR init
+    for (uint8_t vector = 0; vector <= 32; vector++) {
         idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
-        //vectors[vector] = true; Im not sure why this is here
+    }
+    //IRQ init
+    for (uint8_t vector = 33; vector < 47; vector++) {
+        idt_set_descriptor(vector, irq_entry_table[vector-32], 0x8E);
     }
 
 
-    __asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
-    __asm__ volatile ("sti"); // set the interrupt flag
+    idt_load();
+    //__asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
+    asm volatile ("sti"); // set the interrupt flag
 }
 
-
-__attribute__((noreturn))
-void exception_handler() {
-    __asm__ volatile ("cli; hlt"); // Completely hangs the computer
-}

@@ -22,8 +22,10 @@ void clear_row() {
 
     for (size_t i = 0; i < NUM_COLS; i++)
     {
-        buffer[col + NUM_COLS * row] = empty;
+        buffer[i + NUM_COLS * row] = empty;
     }
+
+    col = 0;
 }
 
 void print_char(char character) {
@@ -84,3 +86,4 @@ void print_clear() {
 void print_set_color(uint8_t foreground, uint8_t background) {
     color = foreground + (background << 4);
 }
+

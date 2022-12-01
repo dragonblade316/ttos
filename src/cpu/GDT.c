@@ -3,21 +3,21 @@
 #define GDTLEN 3
 
 struct gdt_ptr {
-	unsigned short limit;
-	unsigned int base;
-} __attribute__((packed));
+	uint16_t limit;
+	uint32_t base;
+} __attribute__((__packed__));
 
 struct gdt_entry {
 	/* Limits */
-	unsigned short limit_low;
+	uint16_t limit_low;
 	/* Segment address */
-	unsigned short base_low;
-	unsigned char base_middle;
+	uint16_t base_low;
+	uint8_t base_middle;
 	/* Access modes */
-	unsigned char access;
-	unsigned char granularity;
-	unsigned char base_high;
-} __attribute__((packed));
+	uint8_t access;
+	uint8_t granularity;
+	uint8_t base_high;
+} __attribute__((__packed__));
 
 struct gdt_ptr  	gdtr;
 struct gdt_entry	gdt[GDTLEN];
@@ -43,11 +43,11 @@ extern void gdt_flush();
 
 void gdt_init() {
     gdtr.limit = (sizeof(struct gdt_entry) * GDTLEN) - 1;
-    gdtr.base = &gdt;
+    gdtr.base =(unsigned int) &gdt;
 
     //found the instructions for this at https://www.viralpatel.net/taj/tutorial/gdt.php
 
-    //TODO program gets stuck on this
+    
     /* Our NULL descriptor */
     gdt_set_gate(0, 0, 0, 0, 0);
     
@@ -65,6 +65,8 @@ void gdt_init() {
 
     //TODO on one of the repos im using as a reference there is user code and user data
 
-    
     gdt_flush();
+
+    //*((int*)0xb8000)=0x07690748;
+
 }

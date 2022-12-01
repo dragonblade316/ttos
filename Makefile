@@ -5,9 +5,9 @@ HEADER_DIR = ./headers
 ISOFILES = ./target/iso
 ISO = ./target/os.iso
 
-CFLAGS = -ffreestanding
+CFLAGS = -ffreestanding -g -m32
 
-CFILES = src/kernel.c src/cpu/GDT.c src/cpu/IDT.c src/display/print.c #PIC.c src/exception_handler.c #liballoc_hooks.c liballoc.c
+CFILES = src/kernel.c src/cpu/GDT.c src/cpu/IDT.c src/display/print.c src/cpu/PIC.c src/cpu/except.c src/drivers/ps2_keyboard.c #liballoc_hooks.c liballoc.c
 #CPPFILES =
 ASMFILES = src/misc/multiboot_header.asm src/start.asm #src/asm/main.asm src/asm/main64.asm handler.asm
 
@@ -34,7 +34,7 @@ $(ISO) : $(ISOFILES)/boot
 #links the files and give kernel.bin to the iso
 $(ISOFILES)/boot : $(OBJ_FILES)
 	echo "this works"
-	ld -n -o $(ISOFILES)/boot/kernel.bin -T $(SRC_DIR)/linker.ld $^
+	ld -n -m elf_i386 -o $(ISOFILES)/boot/kernel.bin -T $(SRC_DIR)/linker.ld $^
 
 #compile c
 $(OBJ_DIR)/%.o : %.c
@@ -49,14 +49,13 @@ $(OBJ_DIR)/%.o : %.c
 
 $(OBJ_DIR)/%.o : %.asm
 	$(shell mkdir -p $(OBJ_DIR) )
-	nasm -f elf64 $< -o $@
+	nasm -f elf32 $< -o $@
 
 run : $(ISO)
-	qemu-system-x86_64 -cdrom ./target/os.iso
+	qemu-system-x86_64 -d int -D output.txt  -cdrom ./target/os.iso
 
 debug : $(ISO)
-	qemu-system-x86_64 -s -S -cdrom ./target/os.iso
-
+	qemu-system-x86_64 -s -S  -cdrom ./target/os.iso
 
 clean:
 	rm -fr $(OBJ_DIR)
